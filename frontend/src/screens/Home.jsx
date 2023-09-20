@@ -19,13 +19,15 @@ const Home = () => {
   //useEffect function for fetching data
   useEffect(() => {
     dispatch(startFetch());
-
     fetchData()
       .then((data) => {
         dispatch(successFetch(data));
       })
-      .catch(() => dispatch(failedFetch()));
-  }, []);
+      .catch((error) => {
+        console.log(error.message)
+        dispatch(failedFetch())
+      })
+  }, [fetchData, dispatch]);
 
   return (
     <div>

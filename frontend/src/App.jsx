@@ -1,4 +1,4 @@
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
@@ -14,11 +14,11 @@ function App() {
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" exact element={<Home />} />
-          <Route path="/login" exact element={<LoginForm />} />
-          <Route path="/signup" exact element={<SignupForm />} />
-          <Route path="/cardDetails/:id" exact element={<CardDetails />} />
-          <Route path="/cart" exact element={<Cart />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/signup" element={<SignupForm />} />
+          <Route path="/cardDetails/:id" element={<CardDetails />} />
+          <Route path="/cart" element={<Cart />} />
           {/* <Route path="*" exact element={<NotFound />} /> */}
         </Routes>
       </BrowserRouter>
