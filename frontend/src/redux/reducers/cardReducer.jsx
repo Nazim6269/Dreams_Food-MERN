@@ -18,29 +18,30 @@ const initialState = {
 export const fetchReducer = (state = initialState, { type, payload }) => {
   switch (type) {
     case FETCH_START:
-      return { isLoading: true };
+      return { ...state, isLoading: true };
 
     case FETCH_SUCCESS:
       return { ...state, isLoading: false, data: payload.payload[1] };
 
     case FETCH_FAILED:
-      return { isLoading: false, isError: true };
+      return { ...state, isLoading: false, isError: true };
     default:
       return state;
   }
 };
 
 export const cartReducer = (state = initialState, { type, payload }) => {
-  const selectedProduct = state.cart.find((item) => item._id === payload._id);
-
   switch (type) {
     case ADD_TO_CART:
+      const selectedProduct = state.cart.find(
+        (item) => item._id === payload._id
+      );
       if (selectedProduct) {
         const newCart = state.cart.filter(
           (item) => item._id !== selectedProduct._id
         );
 
-        selectedProduct.quantity = selectedProduct.quantity + 1;
+        selectedProduct.quantity += 1;
         return {
           cart: [...newCart, selectedProduct],
         };

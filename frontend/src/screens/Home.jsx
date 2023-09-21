@@ -1,11 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import Cards from "../Components/Cards/Cards";
 import CarouselDiv from "../Components/Carousel/Carousel";
 import Footer from "../Components/Footer/Footer";
 import Navbar from "../Components/Navbar/Navbar";
-import { getExpiration } from "../helpers/expirationToken";
 import { fetchData } from "../helpers/fetchData";
 import {
   failedFetch,
@@ -24,8 +22,11 @@ const Home = () => {
       .then((data) => {
         dispatch(successFetch(data));
       })
-      .catch(() => dispatch(failedFetch()));
-  }, []);
+      .catch((error) => {
+        console.log(error.message);
+        dispatch(failedFetch());
+      });
+  }, [fetchData, dispatch]);
 
   return (
     <div>
