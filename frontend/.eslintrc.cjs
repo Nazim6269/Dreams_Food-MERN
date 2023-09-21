@@ -14,6 +14,7 @@ module.exports = {
   rules: {
     "no-undef": "off",
     "react/prop-types": "off",
+    "no-case-declarations": "off",
     "no-unused-vars": "off",
     "react-hooks/exhaustive-deps": "off",
     "react-refresh/only-export-components": [
