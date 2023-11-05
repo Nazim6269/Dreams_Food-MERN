@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { setExpiration } from "../../helpers/expirationToken";
+import { setCookie } from "../../helpers/expirationToken";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -10,15 +10,19 @@ const LoginForm = () => {
     password: "",
   });
 
+  const [emailError, setEmailError] = useState(null);
+  const [passError, setPassError] = useState(null);
+
+  //handle Change function
   const handleChange = (value) => {
-    return setValue((prev) => {
+    setValue((prev) => {
       return { ...prev, ...value };
     });
   };
 
+  //handle Submit function
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const person = { ...value };
 
     try {
@@ -29,21 +33,44 @@ const LoginForm = () => {
         },
         body: JSON.stringify(person),
       });
+
       if (res.ok) {
         const data = await res.json();
-
-        // Function to set a value in local storage with an expiration time
-        setExpiration("accessToken", data.payload, 5);
+        setCookie(data.payload);
         navigate("/");
+      } else {
+        const data = await res.json();
+        const errorMessage = data.message;
+
+        if (errorMessage.match(/email/gi)) {
+          setEmailError(errorMessage);
+          setPassError(null);
+        } else if (errorMessage.match(/password/gi)) {
+          setPassError(errorMessage);
+          setEmailError(null);
+        }
       }
+
       setValue({ email: "", password: "" });
     } catch (error) {
-      console.log(error);
+      setEmailError("An error occurred while processing your request.");
+      setPassError(null);
     }
   };
+
+  useEffect(() => {
+    if (emailError || passError) {
+      const timer = setTimeout(() => {
+        setEmailError(null);
+        setPassError(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [emailError, passError]);
+
   return (
     <div className="p-20">
-      <Card className="w-5/12 p-3  mx-auto">
+      <Card className="border-none shadow-md w-5/12 p-3  mx-auto">
         <h2 className="mx-auto mb-4 font-bold text-3xl">Login</h2>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
@@ -54,6 +81,9 @@ const LoginForm = () => {
               onChange={(e) => handleChange({ email: e.target.value })}
               placeholder="name@example.com"
             />
+            {emailError && (
+              <div className="text-red-600 font-semibold">{emailError}</div>
+            )}
           </Form.Group>
           <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
             <Form.Label>Password</Form.Label>
@@ -63,16 +93,32 @@ const LoginForm = () => {
               onChange={(e) => handleChange({ password: e.target.value })}
               placeholder="Enter your password"
             />
+            {passError && (
+              <div className="text-red-600 font-semibold">{passError}</div>
+            )}
           </Form.Group>
           <Form.Group className="mb-3">
-            <button className="btn btn-outline-dark" type="submit">
-              Submit
+            <button
+              className="btn text-pink-600 w-full font-semibold border-pink-600 hover:text-white hover:bg-pink-600"
+              type="submit"
+            >
+              Login
             </button>
           </Form.Group>
         </Form>
-        <div className="text-center font-semibold underline text-blue-600">
-          <Link to="/signup">New user?</Link>
+        <div className="text-center font-semibold  text-blue-600">
+          <Link className="text-pink-600 hover:text-pink-700">
+            Forget Password?
+          </Link>
         </div>
+
+        <Link
+          to="/signup"
+          className="btn mt-3 text-pink-600 w-full font-semibold border-pink-600 hover:text-white hover:bg-pink-600"
+          type="submit"
+        >
+          Create New Account
+        </Link>
       </Card>
     </div>
   );

@@ -19,7 +19,7 @@ const Navbar = () => {
 
           <Link
             to="/cart"
-            className="inline-flex items-center text-white bg-pink-600 border-1 py-1 px-3 focus:outline-none hover:bg-white rounded   md:mt-0"
+            className="inline-flex items-cente bg-pink-600 border-1 py-1 px-3 focus:outline-none hover:bg-white rounded hover:text-pink-600  md:mt-0"
           >
             Go to cart
           </Link>

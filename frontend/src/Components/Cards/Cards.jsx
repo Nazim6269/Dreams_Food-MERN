@@ -1,9 +1,12 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { selectItem } from "../../redux/actions/actionsCreator";
 
 const Cards = () => {
   const { data } = useSelector((state) => state.fetchReducer);
+
+  const dispatch = useDispatch();
 
   if (!data) {
     return (
@@ -40,6 +43,7 @@ const Cards = () => {
                       className="h-40 rounded  w-full object-cover object-center mb-6"
                       src={img}
                       alt={name}
+                      onClick={() => dispatch(selectItem(item))}
                     />
                   </Link>
                   <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font">

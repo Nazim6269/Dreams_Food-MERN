@@ -18,9 +18,26 @@ const signupGetController = (req, res) => {
 const signupPostController = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    if (!name) {
+      return errorResponse(res, {
+        statusCode: 400,
+        message: "Please, porvide name",
+      });
+    }
+    if (!email) {
+      return errorResponse(res, {
+        statusCode: 400,
+        message: "Please, porvide email",
+      });
+    }
+    if (!password) {
+      return errorResponse(res, {
+        statusCode: 400,
+        message: "Please, porvide passowrd",
+      });
+    }
 
     const isExist = await User.findOne({ email });
-
     if (isExist)
       return errorResponse(res, {
         statusCode: 400,
@@ -57,11 +74,24 @@ const loginPostController = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
+    if (!email) {
+      return errorResponse(res, {
+        statusCode: 400,
+        message: "Please, porvide email",
+      });
+    }
+    if (!password) {
+      return errorResponse(res, {
+        statusCode: 400,
+        message: "Please, porvide password",
+      });
+    }
+
     const isExist = await User.findOne({ email });
     if (!isExist) {
       return errorResponse(res, {
         statusCode: 400,
-        message: "User doesnot exist. Please signup first",
+        message: "User does not exist in this email. Please signup first",
       });
     }
 
@@ -78,14 +108,14 @@ const loginPostController = async (req, res, next) => {
       expiresIn: "5m",
     });
 
-    res.cookie("accessToken", token, {
-      maxAge: 5 * 60 * 1000,
-      httpOnly: true,
-      sameSite: "none",
-    });
+    // res.cookie("accessToken", token, {
+    //   maxAge: 5 * 60 * 1000,
+    //   httpOnly: true,
+    //   sameSite: "none",
+    // });
 
-    isExist.tokens.push({ token: token });
-    await isExist.save();
+    // isExist.tokens.push({ token: token });
+    // await isExist.save();
 
     return successResponse(res, {
       statusCode: 200,

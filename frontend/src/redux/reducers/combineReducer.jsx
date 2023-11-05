@@ -1,4 +1,8 @@
 import { combineReducers } from "redux";
-import { cartReducer, fetchReducer } from "./cardReducer";
+import { cartReducer, fetchReducer, selectedItemReducer } from "./cardReducer";
 
-export const rootReducer = combineReducers({ fetchReducer, cartReducer });
+export const rootReducer = combineReducers({
+  fetchReducer,
+  cartReducer,
+  selectedItemReducer,
+});

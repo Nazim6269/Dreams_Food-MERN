@@ -1,14 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { removeFromCart } from "../redux/actions/actionsCreator";
+import { setDataLocalStorage } from "../helpers/getfromLocalStorage";
+import {
+  addToCart,
+  decrementItem,
+  removeFromCart,
+} from "../redux/actions/actionsCreator";
 
 const Cart = () => {
   const { cart } = useSelector((state) => state.cartReducer);
   const dispatch = useDispatch();
+  const [totalCost, setTotalCost] = useState(0);
+  const [totalItem, setTotalItem] = useState(0);
 
-  //handleDecrement function
-  const handleDecrement = () => {};
+  //handle total price function
+  const totalPrice = () => {
+    let total = 0;
+    cart.map((item) => {
+      const { full } = item.options[0];
+      total = item.quantity * full + total;
+    });
+    setTotalCost(total);
+    setTotalItem(cart.length);
+  };
+
+  useEffect(() => {
+    totalPrice();
+  }, [totalPrice]);
+
+  useEffect(() => {
+    setDataLocalStorage(cart);
+  }, [cart]);
 
   return (
     <div className="container mx-auto mt-10">
@@ -64,13 +87,15 @@ const Cart = () => {
                   </div>
                 </div>
                 <div className="flex justify-center w-1/5">
-                  <svg
-                    className="fill-current text-gray-600 w-3 cursor-pointer"
-                    viewBox="0 0 448 512"
-                    onClick={handleDecrement}
-                  >
-                    <path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
-                  </svg>
+                  {quantity > 1 ? (
+                    <svg
+                      className="fill-current text-gray-600 w-3 cursor-pointer"
+                      viewBox="0 0 448 512"
+                      onClick={() => dispatch(decrementItem(_id))}
+                    >
+                      <path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
+                    </svg>
+                  ) : null}
 
                   <div className="mx-2 border text-center w-8" type="text">
                     {quantity}
@@ -79,6 +104,7 @@ const Cart = () => {
                   <svg
                     className="fill-current text-gray-600 w-3 cursor-pointer"
                     viewBox="0 0 448 512"
+                    onClick={() => dispatch(addToCart(item))}
                   >
                     <path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
                   </svg>
@@ -87,7 +113,7 @@ const Cart = () => {
                   ${full}
                 </span>
                 <span className="text-center w-1/5 font-semibold text-sm">
-                  ${full * quantity}
+                  ${full * quantity < 0 ? 0 : full * quantity}
                 </span>
               </div>
             );
@@ -113,9 +139,9 @@ const Cart = () => {
           <h1 className="font-semibold text-2xl border-b pb-8">
             Order Summary
           </h1>
-          <div className="flex justify-between mt-10 mb-5">
-            <span className="font-semibold text-sm uppercase">Items</span>
-            <span className="font-semibold text-sm">$</span>
+          <div className="flex justify-between text-md mt-10 mb-5">
+            <span className="font-semibold uppercase">Items</span>
+            <span className="font-semibold ">{totalItem}</span>
           </div>
           <div>
             <label className="font-medium inline-block mb-3 text-sm uppercase">
@@ -143,9 +169,9 @@ const Cart = () => {
             Apply
           </button>
           <div className="border-t mt-8">
-            <div className="flex font-semibold justify-between py-6 text-sm uppercase">
+            <div className="flex font-semibold justify-between py-6 text-md uppercase">
               <span>Total cost</span>
-              <span>$</span>
+              <span>${totalCost > 0 ? totalCost + 10 : 0}</span>
             </div>
             <button className="bg-pink-500 font-semibold hover:bg-pink-600 py-3 text-sm text-white uppercase w-full">
               Checkout
