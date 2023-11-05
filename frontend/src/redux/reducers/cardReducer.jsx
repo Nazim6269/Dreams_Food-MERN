@@ -45,6 +45,7 @@ export const cartReducer = (state = initialState, { type, payload }) => {
       const selectedProduct = state.cart.find(
         (item) => item._id === payload._id
       );
+<<<<<<< HEAD
 
       if (selectedProduct) {
         const updatedCart = state.cart.map((item) => {
@@ -57,6 +58,14 @@ export const cartReducer = (state = initialState, { type, payload }) => {
           return item;
         });
 
+=======
+      if (selectedProduct) {
+        const newCart = state.cart.filter(
+          (item) => item._id !== selectedProduct._id
+        );
+
+        selectedProduct.quantity += 1;
+>>>>>>> b908e01a414eb56d6f38281fffb42e7536ea0506
         return {
           ...state,
           cart: updatedCart,
