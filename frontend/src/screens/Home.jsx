@@ -4,10 +4,6 @@ import Cards from "../Components/Cards/Cards";
 import CarouselDiv from "../Components/Carousel/Carousel";
 import Footer from "../Components/Footer/Footer";
 import Navbar from "../Components/Navbar/Navbar";
-<<<<<<< HEAD
-
-=======
->>>>>>> b908e01a414eb56d6f38281fffb42e7536ea0506
 import { fetchData } from "../helpers/fetchData";
 import {
   failedFetch,

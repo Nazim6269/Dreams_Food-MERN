@@ -1,3 +1,4 @@
+import { loadStripe } from "@stripe/stripe-js";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -23,6 +24,41 @@ const Cart = () => {
     });
     setTotalCost(total);
     setTotalItem(cart.length);
+  };
+
+  //handle payment
+  const makePayment = async () => {
+    try {
+      const stripe = await loadStripe(
+        "pk_test_51O982yHJK5WrpDDFsSOsdFkMcNeEGGuNB2XriBHL7k2AmoZHtBS8mT50m7cjWQ3xRxGJ1sDr6ljsaXWkdx7inKDx00uQq867Vh"
+      );
+
+      const body = { products: cart };
+
+      // Fetch to create a Checkout Session on the server
+      const response = await fetch(
+        "http://localhost:3333/create-checkout-session",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }
+      );
+
+      const session = await response.json();
+
+      // Redirect to Checkout using the session ID
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.sessionId,
+      });
+
+      // Handle any errors during redirection
+      if (result.error) {
+        console.error("Error redirecting to Checkout:", result.error);
+      }
+    } catch (error) {
+      console.error("Error making payment:", error);
+    }
   };
 
   useEffect(() => {
@@ -173,7 +209,10 @@ const Cart = () => {
               <span>Total cost</span>
               <span>${totalCost > 0 ? totalCost + 10 : 0}</span>
             </div>
-            <button className="bg-pink-500 font-semibold hover:bg-pink-600 py-3 text-sm text-white uppercase w-full">
+            <button
+              onClick={makePayment}
+              className="bg-pink-500 font-semibold hover:bg-pink-600 py-3 text-sm text-white uppercase w-full"
+            >
               Checkout
             </button>
           </div>

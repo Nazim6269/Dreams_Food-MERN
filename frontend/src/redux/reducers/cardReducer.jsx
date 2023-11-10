@@ -41,11 +41,11 @@ export const fetchReducer = (state = initialState, { type, payload }) => {
 //cart reducer function
 export const cartReducer = (state = initialState, { type, payload }) => {
   switch (type) {
+    //Add to cart functionality
     case ADD_TO_CART:
       const selectedProduct = state.cart.find(
         (item) => item._id === payload._id
       );
-<<<<<<< HEAD
 
       if (selectedProduct) {
         const updatedCart = state.cart.map((item) => {
@@ -58,28 +58,29 @@ export const cartReducer = (state = initialState, { type, payload }) => {
           return item;
         });
 
-=======
-      if (selectedProduct) {
-        const newCart = state.cart.filter(
-          (item) => item._id !== selectedProduct._id
-        );
+        if (selectedProduct) {
+          const newCart = state.cart.filter(
+            (item) => item._id !== selectedProduct._id
+          );
 
-        selectedProduct.quantity += 1;
->>>>>>> b908e01a414eb56d6f38281fffb42e7536ea0506
-        return {
-          ...state,
-          cart: updatedCart,
-        };
+          selectedProduct.quantity += 1;
+
+          return {
+            ...state,
+            cart: updatedCart,
+          };
+        }
       }
-
       return { ...state, cart: [...state.cart, { ...payload, quantity: 1 }] };
 
+    //Remove form cart functionality
     case REMOVE_FROM_CART:
-      console.log(payload);
       return {
         ...state,
         cart: state.cart.filter((item) => item._id !== payload),
       };
+
+    //Decrement item in cart page
     case DECREMENT_ITEM:
       let productItem = state.cart.find((item) => item._id === payload);
 
@@ -103,7 +104,6 @@ export const cartReducer = (state = initialState, { type, payload }) => {
         ...state,
         cart: state.cart.filter((item) => item._id !== payload),
       };
-
     default:
       return state;
   }

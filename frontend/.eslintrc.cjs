@@ -13,6 +13,7 @@ module.exports = {
   plugins: ["react-refresh"],
   rules: {
     "no-case-declarations": "off",
+    "no-fallthrough": "off",
     "no-undef": "off",
     "react/prop-types": "off",
     "no-case-declarations": "off",

@@ -107,7 +107,10 @@ const LoginForm = () => {
           </Form.Group>
         </Form>
         <div className="text-center font-semibold  text-blue-600">
-          <Link className="text-pink-600 hover:text-pink-700">
+          <Link
+            to={"/reset-password"}
+            className="text-pink-600 hover:text-pink-700"
+          >
             Forget Password?
           </Link>
         </div>
@@ -118,6 +121,20 @@ const LoginForm = () => {
           type="submit"
         >
           Create New Account
+        </Link>
+        <Link
+          to=""
+          className="btn mt-3 text-pink-600 w-full font-semibold border-pink-600 hover:text-white hover:bg-pink-600"
+          type="submit"
+        >
+          Continue with Google
+        </Link>
+        <Link
+          to=""
+          className="btn mt-3 text-pink-600 w-full font-semibold border-pink-600 hover:text-white hover:bg-pink-600"
+          type="submit"
+        >
+          Create with Facebook
         </Link>
       </Card>
     </div>

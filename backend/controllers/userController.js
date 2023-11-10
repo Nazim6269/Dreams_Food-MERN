@@ -1,14 +1,19 @@
 //external import
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const stripe = require("stripe")(
+  "sk_test_51O982yHJK5WrpDDFt9gN9JEIrYyisFWZOAO6GBfWlgt0cIFmRF8cA5oPwj0NiPoXjxuFcnAyN4o8SMChAL8PkD2o00ysyezMub"
+);
+const nodmailer = require("nodemailer");
 //internal import
 const {
   errorResponse,
   successResponse,
 } = require("../helpers/responseHandler");
 const { User } = require("../models/signupModel");
-const { jwtAccessKey } = require("../secret");
+const { jwtAccessKey, jwtForgetPassKey } = require("../secret");
 const { mongoose } = require("mongoose");
+const { createJWT } = require("../helpers/createJWT");
 
 const signupGetController = (req, res) => {
   res.send("hi");
@@ -155,9 +160,83 @@ const foodController = async (req, res, next) => {
   }
 };
 
+const checkOutController = async (req, res) => {
+  try {
+    const { products } = req.body;
+
+    const lineItems = products.map((product) => {
+      const { full } = product.options[0];
+
+      const unitAmount = full * 100;
+
+      if (isNaN(unitAmount) || unitAmount <= 0) {
+        throw new Error(`Invalid unit_amount for product: ${product.name}`);
+      }
+
+      return {
+        price_data: {
+          currency: "inr",
+          product_data: {
+            name: product.name,
+          },
+          unit_amount: unitAmount,
+        },
+        quantity: product.quantity,
+      };
+    });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItems,
+      mode: "payment",
+      success_url: "http://localhost:5173/success",
+      cancel_url: "http://localhost:5173/cancel",
+    });
+
+    res.json({ sessionId: session.id });
+  } catch (error) {
+    console.error("Error in checkOutController:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const transporter = nodmailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "nazimuddin102001@gmail.com",
+    password: "12345",
+  },
+});
+//forgetPassController
+const forgetPassController = async (req, res, next) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email: email });
+  if (!user) {
+    errorResponse(res, {
+      statusCode: 400,
+      message: "User not found in this email",
+    });
+  }
+
+  //create token
+  const token = createJWT({ email }, jwtForgetPassKey, "120s");
+  //prepare email
+  const emailData = {};
+  const setUserToken = await User.findByIdAndUpdate(
+    {
+      _id: user._id,
+    },
+    { verifyToken: token },
+    { new: true }
+  );
+};
+
 module.exports = {
   signupPostController,
   signupGetController,
   loginPostController,
   foodController,
+  checkOutController,
+  forgetPassController,
 };

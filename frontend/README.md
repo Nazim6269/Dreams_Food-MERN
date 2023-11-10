@@ -11,3 +11,4 @@ Currently, two official plugins are available:
 2. Solved problem:i have added two item in cart page. When i increase the quantity of second item it works well. But when increase first item amount, the second item comes the first position and first item go second position.
 3. Solved problem: set and get item in localStorage permanently. so, when refresh cart data still present.
 4. Solved problem: when show card details page and if refresh the card details page, the item still present.
+5. solved problem: stripe added
