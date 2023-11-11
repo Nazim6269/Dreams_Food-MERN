@@ -12,3 +12,4 @@ Currently, two official plugins are available:
 3. Solved problem: set and get item in localStorage permanently. so, when refresh cart data still present.
 4. Solved problem: when show card details page and if refresh the card details page, the item still present.
 5. solved problem: stripe added
+6. solved problem: .env file in vite project

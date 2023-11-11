@@ -1,7 +1,10 @@
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { useEffect, useState } from "react";
 import { Card, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { setCookie } from "../../helpers/expirationToken";
+import { jwtDecode } from "jwt-decode";
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -12,6 +15,15 @@ const LoginForm = () => {
 
   const [emailError, setEmailError] = useState(null);
   const [passError, setPassError] = useState(null);
+  //handle faliure function
+  const handleFailure = (result) => {
+    console.log(decoded);
+  };
+  //handleSuccess function
+  const handleSuccess = (googleData) => {
+    const decoded = jwtDecode(googleData.credential);
+    console.log(decoded);
+  };
 
   //handle Change function
   const handleChange = (value) => {
@@ -114,7 +126,6 @@ const LoginForm = () => {
             Forget Password?
           </Link>
         </div>
-
         <Link
           to="/signup"
           className="btn mt-3 text-pink-600 w-full font-semibold border-pink-600 hover:text-white hover:bg-pink-600"
@@ -122,20 +133,22 @@ const LoginForm = () => {
         >
           Create New Account
         </Link>
+
         <Link
           to=""
-          className="btn mt-3 text-pink-600 w-full font-semibold border-pink-600 hover:text-white hover:bg-pink-600"
-          type="submit"
-        >
-          Continue with Google
-        </Link>
-        <Link
-          to=""
-          className="btn mt-3 text-pink-600 w-full font-semibold border-pink-600 hover:text-white hover:bg-pink-600"
+          className="btn mt-3 mb-3 text-pink-600 w-full font-semibold border-pink-600 hover:text-white hover:bg-pink-600"
           type="submit"
         >
           Create with Facebook
         </Link>
+        <GoogleOAuthProvider clientId={clientId}>
+          <GoogleLogin
+            buttonText="Log in with Google"
+            onSuccess={handleSuccess}
+            onFailure={handleFailure}
+            cookiePolicy={"singel_host_orign"}
+          />
+        </GoogleOAuthProvider>
       </Card>
     </div>
   );
