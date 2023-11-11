@@ -11,9 +11,10 @@ const {
   successResponse,
 } = require("../helpers/responseHandler");
 const { User } = require("../models/signupModel");
-const { jwtAccessKey, jwtForgetPassKey } = require("../secret");
+const { jwtAccessKey, jwtForgetPassKey, clientURL } = require("../secret");
 const { mongoose } = require("mongoose");
 const { createJWT } = require("../helpers/createJWT");
+const { emailWithNodemailer } = require("../helpers/email");
 
 const signupGetController = (req, res) => {
   res.send("hi");
@@ -200,13 +201,6 @@ const checkOutController = async (req, res) => {
   }
 };
 
-const transporter = nodmailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "nazimuddin102001@gmail.com",
-    password: "12345",
-  },
-});
 //forgetPassController
 const forgetPassController = async (req, res, next) => {
   const { email } = req.body;
@@ -221,8 +215,17 @@ const forgetPassController = async (req, res, next) => {
 
   //create token
   const token = createJWT({ email }, jwtForgetPassKey, "120s");
-  //prepare email
-  const emailData = {};
+
+  // // Verify token
+  // try {
+  //   jwt.verify(token, jwtForgetPassKey);
+  // } catch (error) {
+  //   return errorResponse(res, {
+  //     statusCode: 400,
+  //     message: "Invalid token",
+  //   });
+  // }
+
   const setUserToken = await User.findByIdAndUpdate(
     {
       _id: user._id,
@@ -230,6 +233,22 @@ const forgetPassController = async (req, res, next) => {
     { verifyToken: token },
     { new: true }
   );
+
+  //prepare email
+  const emailData = {
+    email,
+    subject: "Reset your Password",
+    html: `<h2>hello ${user.name}</h2>
+      <h3>Please click here <a href="${clientURL}/forget-password/${user._id}/${setUserToken.verifyToken}">to reset your password</a></h3>`,
+  };
+  //send email
+  emailWithNodemailer(emailData);
+
+  return successResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: "Check your Email",
+  });
 };
 
 module.exports = {

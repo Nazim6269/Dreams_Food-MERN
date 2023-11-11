@@ -22,12 +22,11 @@ const ResetPassword = () => {
       body: JSON.stringify({ email }),
     });
 
-    const data = await res.json();
-    console.log(data);
+    const { success, message } = await res.json();
 
-    if (data.status === 201) {
+    if (success === true) {
       setEmail("");
-      setMessage(true);
+      setMessage(message);
     } else {
       toast.error("Invalid");
     }
@@ -40,7 +39,7 @@ const ResetPassword = () => {
           <Form.Group className="mb-3">
             <Form.Label>Email address</Form.Label>
             {message ? (
-              <p>Pasword Reset Link successfully sent in your email</p>
+              <p style={{ color: "green", fontWeight: "bold" }}>{message}</p>
             ) : null}
             <Form.Control
               type="email"
