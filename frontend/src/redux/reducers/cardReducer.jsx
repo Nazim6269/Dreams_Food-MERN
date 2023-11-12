@@ -31,10 +31,11 @@ export const fetchReducer = (state = initialState, { type, payload }) => {
 };
 
 export const cartReducer = (state = initialState, { type, payload }) => {
-  const selectedProduct = state.cart.find((item) => item._id === payload._id);
-
   switch (type) {
     case ADD_TO_CART:
+      const selectedProduct = state.cart.find(
+        (item) => item._id === payload._id
+      );
       if (selectedProduct) {
         const newCart = state.cart.filter(
           (item) => item._id !== selectedProduct._id
