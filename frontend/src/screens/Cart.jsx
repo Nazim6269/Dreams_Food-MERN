@@ -1,73 +1,14 @@
-import { loadStripe } from "@stripe/stripe-js";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { setDataLocalStorage } from "../helpers/getfromLocalStorage";
-import {
-  addToCart,
-  decrementItem,
-  removeFromCart,
-} from "../redux/actions/actionsCreator";
+import { removeFromCart } from "../redux/actions/actionsCreator";
 
 const Cart = () => {
   const { cart } = useSelector((state) => state.cartReducer);
   const dispatch = useDispatch();
-  const [totalCost, setTotalCost] = useState(0);
-  const [totalItem, setTotalItem] = useState(0);
 
-  //handle total price function
-  const totalPrice = () => {
-    let total = 0;
-    cart.map((item) => {
-      const { full } = item.options[0];
-      total = item.quantity * full + total;
-    });
-    setTotalCost(total);
-    setTotalItem(cart.length);
-  };
-
-  //handle payment
-  const makePayment = async () => {
-    try {
-      const stripe = await loadStripe(
-        "pk_test_51O982yHJK5WrpDDFsSOsdFkMcNeEGGuNB2XriBHL7k2AmoZHtBS8mT50m7cjWQ3xRxGJ1sDr6ljsaXWkdx7inKDx00uQq867Vh"
-      );
-
-      const body = { products: cart };
-
-      // Fetch to create a Checkout Session on the server
-      const response = await fetch(
-        "http://localhost:3333/create-checkout-session",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        }
-      );
-
-      const session = await response.json();
-
-      // Redirect to Checkout using the session ID
-      const result = await stripe.redirectToCheckout({
-        sessionId: session.sessionId,
-      });
-
-      // Handle any errors during redirection
-      if (result.error) {
-        console.error("Error redirecting to Checkout:", result.error);
-      }
-    } catch (error) {
-      console.error("Error making payment:", error);
-    }
-  };
-
-  useEffect(() => {
-    totalPrice();
-  }, [totalPrice]);
-
-  useEffect(() => {
-    setDataLocalStorage(cart);
-  }, [cart]);
+  //handleDecrement function
+  const handleDecrement = () => {};
 
   return (
     <div className="container mx-auto mt-10">
@@ -123,15 +64,13 @@ const Cart = () => {
                   </div>
                 </div>
                 <div className="flex justify-center w-1/5">
-                  {quantity > 1 ? (
-                    <svg
-                      className="fill-current text-gray-600 w-3 cursor-pointer"
-                      viewBox="0 0 448 512"
-                      onClick={() => dispatch(decrementItem(_id))}
-                    >
-                      <path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
-                    </svg>
-                  ) : null}
+                  <svg
+                    className="fill-current text-gray-600 w-3 cursor-pointer"
+                    viewBox="0 0 448 512"
+                    onClick={handleDecrement}
+                  >
+                    <path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
+                  </svg>
 
                   <div className="mx-2 border text-center w-8" type="text">
                     {quantity}
@@ -140,7 +79,6 @@ const Cart = () => {
                   <svg
                     className="fill-current text-gray-600 w-3 cursor-pointer"
                     viewBox="0 0 448 512"
-                    onClick={() => dispatch(addToCart(item))}
                   >
                     <path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
                   </svg>
@@ -149,7 +87,7 @@ const Cart = () => {
                   ${full}
                 </span>
                 <span className="text-center w-1/5 font-semibold text-sm">
-                  ${full * quantity < 0 ? 0 : full * quantity}
+                  ${full * quantity}
                 </span>
               </div>
             );
@@ -175,9 +113,9 @@ const Cart = () => {
           <h1 className="font-semibold text-2xl border-b pb-8">
             Order Summary
           </h1>
-          <div className="flex justify-between text-md mt-10 mb-5">
-            <span className="font-semibold uppercase">Items</span>
-            <span className="font-semibold ">{totalItem}</span>
+          <div className="flex justify-between mt-10 mb-5">
+            <span className="font-semibold text-sm uppercase">Items</span>
+            <span className="font-semibold text-sm">$</span>
           </div>
           <div>
             <label className="font-medium inline-block mb-3 text-sm uppercase">
@@ -205,14 +143,11 @@ const Cart = () => {
             Apply
           </button>
           <div className="border-t mt-8">
-            <div className="flex font-semibold justify-between py-6 text-md uppercase">
+            <div className="flex font-semibold justify-between py-6 text-sm uppercase">
               <span>Total cost</span>
-              <span>${totalCost > 0 ? totalCost + 10 : 0}</span>
+              <span>$</span>
             </div>
-            <button
-              onClick={makePayment}
-              className="bg-pink-500 font-semibold hover:bg-pink-600 py-3 text-sm text-white uppercase w-full"
-            >
+            <button className="bg-pink-500 font-semibold hover:bg-pink-600 py-3 text-sm text-white uppercase w-full">
               Checkout
             </button>
           </div>
