@@ -12,11 +12,8 @@ module.exports = {
   settings: { react: { version: "18.2" } },
   plugins: ["react-refresh"],
   rules: {
-    "no-case-declarations": "off",
-    "no-fallthrough": "off",
     "no-undef": "off",
     "react/prop-types": "off",
-    "no-case-declarations": "off",
     "no-unused-vars": "off",
     "react-hooks/exhaustive-deps": "off",
     "react-refresh/only-export-components": [

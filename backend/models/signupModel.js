@@ -17,9 +17,6 @@ const signupSchema = mongoose.Schema({
     type: String,
   },
   tokens: [{ token: String }],
-  verifyToken: {
-    type: String,
-  },
 });
 
 const User = mongoose.model("User", signupSchema);
