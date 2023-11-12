@@ -38,8 +38,10 @@ const SignupForm = () => {
 
   return (
     <div className="p-20">
-      <Card className="  w-5/12 p-3 mx-auto ">
-        <h2 className="mx-auto mb-4 font-bold text-3xl">Signup</h2>
+      <Card className="  w-5/12  border-none shadow-sm p-3 mx-auto ">
+        <h2 className="mx-auto mb-4 font-bold text-pink-600 text-3xl">
+          Signup
+        </h2>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label>Name</Form.Label>
@@ -69,14 +71,20 @@ const SignupForm = () => {
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-            <button className="btn btn-outline-dark" type="submit">
-              Submit
+            <button
+              className="btn font-semibold mb-2 w-full text-white bg-pink-600 hover:bg-pink-500"
+              type="submit"
+            >
+              Sign up
+            </button>
+            <button
+              className="btn w-full font-semibold text-white bg-pink-600 hover:bg-pink-500"
+              type="submit"
+            >
+              <Link to="/login">Login</Link>
             </button>
           </Form.Group>
         </Form>
-        <div className="text-center font-semibold underline text-blue-600">
-          <Link to="/login">Already user?</Link>
-        </div>
       </Card>
     </div>
   );

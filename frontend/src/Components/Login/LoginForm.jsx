@@ -1,16 +1,11 @@
-
-
+import FacebookLogin from "@greatsumini/react-facebook-login";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import { useEffect, useState } from "react";
-import { Card, Form } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
-import { setCookie } from "../../helpers/expirationToken";
-const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 import { useState } from "react";
 import { Card, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { setExpiration } from "../../helpers/expirationToken";
-
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -19,12 +14,41 @@ const LoginForm = () => {
     password: "",
   });
 
+  //handle Success function
+  const handleSuccess = async (googleData) => {
+    const userInfo = jwtDecode(googleData.credential);
+    const { name, email, sub: googleId } = userInfo;
+    const createUser = {
+      name,
+      email,
+      googleId,
+    };
+
+    const res = await fetch("http://localhost:3333/google-login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(createUser),
+    });
+
+    const data = await res.json();
+    console.log(data);
+  };
+
+  //handle error function
+  const handleError = (error) => {
+    console.log(error);
+  };
+
+  //handle change function
   const handleChange = (value) => {
     return setValue((prev) => {
       return { ...prev, ...value };
     });
   };
 
+  //handlesubmit function
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -52,8 +76,8 @@ const LoginForm = () => {
   };
   return (
     <div className="p-20">
-      <Card className="w-5/12 p-3  mx-auto">
-        <h2 className="mx-auto mb-4 font-bold text-3xl">Login</h2>
+      <Card className="w-5/12 p-3 border-none shadow-md  mx-auto">
+        <h2 className="mx-auto mb-4 text-pink-600 font-bold text-3xl">Login</h2>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label>Email address</Form.Label>
@@ -74,14 +98,41 @@ const LoginForm = () => {
             />
           </Form.Group>
           <Form.Group className="mb-3">
-            <button className="btn btn-outline-dark" type="submit">
-              Submit
+            <button
+              className="btn border-none text-white font-semibold bg-pink-600 hover:bg-pink-500 w-full text-center"
+              type="submit"
+            >
+              Login
             </button>
+            <div className="text-center my-3 font-semibold underline text-pink-600 ">
+              <Link to="/signup">Forget Password?</Link>
+            </div>
+            <button
+              className="btn mb-3 border-none text-white font-semibold bg-pink-600 hover:bg-pink-500 w-full text-center"
+              type="submit"
+            >
+              <Link to="/signup">Create new account</Link>
+            </button>
+
+            <GoogleOAuthProvider clientId={clientId}>
+              <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
+            </GoogleOAuthProvider>
+
+            <FacebookLogin
+              appId="1088597931155576"
+              className="mt-3 rounded-md w-full bg-blue-600 hover:bg-blue-500 font-semibold text-white py-2 px-6 border-none"
+              onSuccess={(response) => {
+                console.log("Login Success!", response);
+              }}
+              onFail={(error) => {
+                console.log("Login Failed!", error);
+              }}
+              onProfileSuccess={(response) => {
+                console.log("Get Profile Success!", response);
+              }}
+            />
           </Form.Group>
         </Form>
-        <div className="text-center font-semibold underline text-blue-600">
-          <Link to="/signup">New user?</Link>
-        </div>
       </Card>
     </div>
   );

@@ -14,6 +14,43 @@ const { mongoose } = require("mongoose");
 const signupGetController = (req, res) => {
   res.send("hi");
 };
+//google login controller
+const googleLoginController = async (req, res, next) => {
+  const { name, email, googleId } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      const hasedPassword = await bcrypt.hash(googleId, 10);
+
+      const newUser = await User.create({
+        name,
+        email,
+        password: hasedPassword,
+      });
+
+      const response = await newUser.save();
+      if (!response) {
+        return errorResponse(res, {
+          statusCode: 400,
+          message: "Failed to sign up",
+        });
+      }
+      successResponse(res, {
+        statusCode: 201,
+        message: "User Created Successfully",
+        payload: newUser,
+      });
+    }
+    successResponse(res, {
+      statusCode: 200,
+      message: "User Exist with this email",
+      payload: email,
+    });
+  } catch (error) {
+    next(createError(error));
+  }
+};
 
 //signup POST controller
 const signupPostController = async (req, res) => {
@@ -79,14 +116,14 @@ const loginPostController = async (req, res, next) => {
       expiresIn: "5m",
     });
 
-    res.cookie("accessToken", token, {
-      maxAge: 5 * 60 * 1000,
-      httpOnly: true,
-      sameSite: "none",
-    });
+    // res.cookie("accessToken", token, {
+    //   maxAge: 5 * 60 * 1000,
+    //   httpOnly: true,
+    //   sameSite: "none",
+    // });
 
-    isExist.tokens.push({ token: token });
-    await isExist.save();
+    // isExist.tokens.push({ token: token });
+    // await isExist.save();
 
     return successResponse(res, {
       statusCode: 200,
@@ -95,44 +132,6 @@ const loginPostController = async (req, res, next) => {
     });
   } catch (error) {
     return next(error);
-  }
-};
-
-//handleGoolgleLogin controlelr
-const handleGoogleLoginController = async (req, res, next) => {
-  const { name, email, googleId } = req.body;
-
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      const hasedPassword = await bcrypt.hash(googleId, 10);
-
-      const newUser = await User.create({
-        name,
-        email,
-        password: hasedPassword,
-      });
-
-      const response = await newUser.save();
-      if (!response) {
-        return errorResponse(res, {
-          statusCode: 400,
-          message: "Failed to sign up",
-        });
-      }
-      successResponse(res, {
-        statusCode: 201,
-        message: "User Created Successfully",
-        payload: newUser,
-      });
-    }
-    successResponse(res, {
-      statusCode: 200,
-      message: "User Exist with this email",
-      payload: email,
-    });
-  } catch (error) {
-    next(createError(error));
   }
 };
 
@@ -169,5 +168,5 @@ module.exports = {
   signupGetController,
   loginPostController,
   foodController,
-
+  googleLoginController,
 };
