@@ -6,6 +6,7 @@ import { Card, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { setExpiration } from "../../helpers/expirationToken";
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const fbId = import.meta.env.VITE_FB_ID;
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -48,6 +49,19 @@ const LoginForm = () => {
     });
   };
 
+  //handle facebook success
+  const handleFbSuccess = (response) => {
+    console.log("Login Success!", response);
+  };
+  //handle facebook fail
+  const handleFbFail = (error) => {
+    console.log("Login Failed!", error);
+  };
+  //handle facebook profile success
+  const handleFbProfileSuccess = (response) => {
+    console.log("Get Profile Success!", response);
+  };
+
   //handlesubmit function
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,7 +90,7 @@ const LoginForm = () => {
   };
   return (
     <div className="p-20">
-      <Card className="w-5/12 p-3 border-none shadow-md  mx-auto">
+      <Card className="w-3/12 p-3 border-none shadow-md  mx-auto">
         <h2 className="mx-auto mb-4 text-pink-600 font-bold text-3xl">Login</h2>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
@@ -119,17 +133,11 @@ const LoginForm = () => {
             </GoogleOAuthProvider>
 
             <FacebookLogin
-              appId="1088597931155576"
+              appId={fbId}
               className="mt-3 rounded-md w-full bg-blue-600 hover:bg-blue-500 font-semibold text-white py-2 px-6 border-none"
-              onSuccess={(response) => {
-                console.log("Login Success!", response);
-              }}
-              onFail={(error) => {
-                console.log("Login Failed!", error);
-              }}
-              onProfileSuccess={(response) => {
-                console.log("Get Profile Success!", response);
-              }}
+              onSuccess={handleFbSuccess}
+              onFail={handleFbFail}
+              onProfileSuccess={handleFbProfileSuccess}
             />
           </Form.Group>
         </Form>
