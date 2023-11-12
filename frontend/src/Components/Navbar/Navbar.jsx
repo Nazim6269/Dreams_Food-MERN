@@ -6,9 +6,11 @@ const Navbar = () => {
     <div>
       <header className="text-white bg-pink-600 font-semibold body-font shadow-lg">
         <div className="container mx-auto flex flex-wrap p-4 flex-col md:flex-row items-center">
-          <a className="flex title-font font-medium items-center md:mb-0">
-            <div className="ml-3 text-xl italic">Dreams Food</div>
-          </a>
+          <div>
+            <a className="flex title-font font-medium items-center md:mb-0">
+              <div className="ml-3 text-3xl italic">Dreams Food</div>
+            </a>
+          </div>
           <nav className="md:ml-auto md:mr-auto flex flex-wrap  items-center text-base justify-center">
             <a className="mr-5">Home</a>
             <a className="mr-5">About</a>
@@ -23,6 +25,12 @@ const Navbar = () => {
           >
             Go to cart
           </Link>
+          <div className="flex items-center">
+            <div className="mr-2 ml-6">
+              <img className="w-8 h-8 rounded-full " src="./Nazim.jpg" alt="" />
+            </div>
+            <div>Nazimuddin</div>
+          </div>
         </div>
       </header>
     </div>

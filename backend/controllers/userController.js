@@ -1,5 +1,6 @@
 //external import
 const jwt = require("jsonwebtoken");
+const createError = require("http-errors");
 const bcrypt = require("bcryptjs");
 const stripe = require("stripe")(
   "sk_test_51O982yHJK5WrpDDFt9gN9JEIrYyisFWZOAO6GBfWlgt0cIFmRF8cA5oPwj0NiPoXjxuFcnAyN4o8SMChAL8PkD2o00ysyezMub"
@@ -133,6 +134,44 @@ const loginPostController = async (req, res, next) => {
   }
 };
 
+//handleGoolgleLogin controlelr
+const handleGoogleLoginController = async (req, res, next) => {
+  const { name, email, googleId } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      const hasedPassword = await bcrypt.hash(googleId, 10);
+
+      const newUser = await User.create({
+        name,
+        email,
+        password: hasedPassword,
+      });
+
+      const response = await newUser.save();
+      if (!response) {
+        return errorResponse(res, {
+          statusCode: 400,
+          message: "Failed to sign up",
+        });
+      }
+      successResponse(res, {
+        statusCode: 201,
+        message: "User Created Successfully",
+        payload: newUser,
+      });
+    }
+    successResponse(res, {
+      statusCode: 200,
+      message: "User Exist with this email",
+      payload: email,
+    });
+  } catch (error) {
+    next(createError(error));
+  }
+};
+
 const foodController = async (req, res, next) => {
   try {
     const foodItems = await mongoose.connection.db
@@ -258,4 +297,5 @@ module.exports = {
   foodController,
   checkOutController,
   forgetPassController,
+  handleGoogleLoginController,
 };

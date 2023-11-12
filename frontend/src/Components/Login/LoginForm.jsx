@@ -1,9 +1,9 @@
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { Card, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { setCookie } from "../../helpers/expirationToken";
-import { jwtDecode } from "jwt-decode";
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const LoginForm = () => {
@@ -20,9 +20,35 @@ const LoginForm = () => {
     console.log(decoded);
   };
   //handleSuccess function
-  const handleSuccess = (googleData) => {
-    const decoded = jwtDecode(googleData.credential);
-    console.log(decoded);
+  const handleSuccess = async (googleData) => {
+    try {
+      const decoded = jwtDecode(googleData.credential);
+      const { name, email, sub: googleId } = decoded;
+
+      const userData = {
+        name,
+        email,
+        googleId,
+      };
+
+      const res = await fetch("http://localhost:3333/save-google-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setCookie(data.payload);
+        navigate("/");
+      } else {
+        console.error("Failed to save Google user data:", res.statusText);
+      }
+    } catch (error) {
+      console.error("Error processing Google login:", error);
+    }
   };
 
   //handle Change function
