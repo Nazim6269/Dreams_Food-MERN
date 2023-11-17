@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { removeFromCart } from "../redux/actions/actionsCreator";
+import { setLocalCart } from "../helpers/setLocalStorage";
 
 const Cart = () => {
   const { cart } = useSelector((state) => state.cartReducer);
+
   const dispatch = useDispatch();
 
   //handleDecrement function
   const handleDecrement = () => {};
+  useEffect(() => {
+    setLocalCart(cart);
+  }, []);
 
   return (
     <div className="container mx-auto mt-10">

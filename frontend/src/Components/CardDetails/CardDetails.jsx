@@ -2,10 +2,12 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { addToCart } from "../../redux/actions/actionsCreator";
+import { setLocalSeclectedProduct } from "../../helpers/setLocalStorage";
 
 const CardDetails = () => {
   const { id } = useParams();
-  const { data } = useSelector((state) => state.fetchReducer);
+  const { data } = useSelector((state) => state.selectedProductReducer);
+  console.log(data);
   const dispatch = useDispatch();
 
   if (!data) {
@@ -20,6 +22,8 @@ const CardDetails = () => {
       </div>
     );
   }
+
+  setLocalSeclectedProduct(arrData);
 
   //handleCart function
   const handleCart = (item) => {

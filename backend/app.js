@@ -6,16 +6,18 @@ const morgan = require("morgan");
 const createError = require("http-errors");
 const rateLimit = require("express-rate-limit");
 const xssClean = require("xss-clean");
+
 //internal import
 const { userRouter } = require("./routes/userRouter");
 const { errorResponse } = require("./helpers/responseHandler");
+const { fbId, fbSecret } = require("./secret");
 
 //middleware array
 const middleware = [
   morgan("dev"),
   cors(),
   rateLimit({
-    windosMs: 1 * 60 * 1000,
+    windowMs: 1 * 60 * 1000,
     max: 10,
     message: "Sorry you have tried more than 5,try again later",
   }),
@@ -25,7 +27,6 @@ const middleware = [
 ];
 
 //use middleware
-
 app.use(middleware);
 app.use("/", userRouter);
 

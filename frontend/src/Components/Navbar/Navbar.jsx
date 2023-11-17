@@ -1,7 +1,10 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
+  const { name } = useSelector((state) => state.profileReducer);
+  console.log(name);
   return (
     <div>
       <header className="text-white bg-pink-600 font-semibold body-font shadow-lg">
@@ -29,7 +32,7 @@ const Navbar = () => {
             <div className="mr-2 ml-6">
               <img className="w-8 h-8 rounded-full " src="./Nazim.jpg" alt="" />
             </div>
-            <div>Nazimuddin</div>
+            <div>{name}</div>
           </div>
         </div>
       </header>
