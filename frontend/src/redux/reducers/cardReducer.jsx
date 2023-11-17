@@ -1,9 +1,16 @@
 import {
+  getLocalCart,
+  getLocalProfile,
+  getLocalSeclectedProduct,
+} from "../../helpers/setLocalStorage";
+import {
   ADD_TO_CART,
   FETCH_FAILED,
   FETCH_START,
   FETCH_SUCCESS,
   REMOVE_FROM_CART,
+  SELECTED_PRODUCT,
+  SET_PROFILE_INFO,
 } from "../actions/actionsTypes";
 
 //initial states
@@ -11,7 +18,9 @@ const initialState = {
   isLoading: false,
   isError: null,
   data: [],
-  cart: [],
+  cart: getLocalCart(),
+  profile: getLocalProfile(),
+  selectedProduct: getLocalSeclectedProduct(),
 };
 
 //reducer functions
@@ -52,6 +61,35 @@ export const cartReducer = (state = initialState, { type, payload }) => {
       return {
         ...state,
         cart: state.cart.filter((item) => item._id !== payload),
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const profileReducer = (state = initialState, { type, payload }) => {
+  switch (type) {
+    case SET_PROFILE_INFO:
+      return {
+        ...state,
+        profile: payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const selectedProductReducer = (
+  state = initialState,
+  { type, payload }
+) => {
+  switch (type) {
+    case SELECTED_PRODUCT:
+      return {
+        ...state,
+        selectedProduct: payload,
       };
 
     default:

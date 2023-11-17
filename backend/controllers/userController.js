@@ -10,6 +10,11 @@ const {
 const { User } = require("../models/signupModel");
 const { jwtAccessKey } = require("../secret");
 const { mongoose } = require("mongoose");
+const { createJWT } = require("../helpers/createJWT");
+const {
+  setAccessTokenCookie,
+  setRefreshTokenCookie,
+} = require("../helpers/cookies");
 
 const signupGetController = (req, res) => {
   res.send("hi");
@@ -41,15 +46,21 @@ const googleLoginController = async (req, res, next) => {
         message: "User Created Successfully",
         payload: newUser,
       });
+    } else {
+      successResponse(res, {
+        statusCode: 200,
+        message: "User Exist with this email",
+        payload: email,
+      });
     }
-    successResponse(res, {
-      statusCode: 200,
-      message: "User Exist with this email",
-      payload: email,
-    });
   } catch (error) {
     next(createError(error));
   }
+};
+
+//facebook login controller
+const facebookLoginController = async (req, res, next) => {
+  console.log(req.body);
 };
 
 //signup POST controller
@@ -112,29 +123,22 @@ const loginPostController = async (req, res, next) => {
     }
 
     //createToken
-    const token = jwt.sign({ email: email, password: password }, jwtAccessKey, {
-      expiresIn: "5m",
-    });
-
-    // res.cookie("accessToken", token, {
-    //   maxAge: 5 * 60 * 1000,
-    //   httpOnly: true,
-    //   sameSite: "none",
-    // });
-
-    // isExist.tokens.push({ token: token });
-    // await isExist.save();
+    const accessToken = createJWT({ email, password }, jwtAccessKey, "10m");
+    setAccessTokenCookie(accessToken);
+    const refreshToken = createJWT({ email, password }, jwtAccessKey, "7d");
+    setRefreshTokenCookie(refreshToken);
 
     return successResponse(res, {
       statusCode: 200,
       message: "Successfully login",
-      payload: token,
+      payload: accessToken,
     });
   } catch (error) {
     return next(error);
   }
 };
 
+//food controller
 const foodController = async (req, res, next) => {
   try {
     const foodItems = await mongoose.connection.db
@@ -169,4 +173,5 @@ module.exports = {
   loginPostController,
   foodController,
   googleLoginController,
+  facebookLoginController,
 };

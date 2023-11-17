@@ -1,22 +1,25 @@
-import FacebookLogin from "@greatsumini/react-facebook-login";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, Form } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { setExpiration } from "../../helpers/expirationToken";
+import { profileInLocalStorage } from "../../helpers/setLocalStorage";
+import { setProfileInfo } from "../../redux/actions/actionsCreator";
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const fbId = import.meta.env.VITE_FB_ID;
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [value, setValue] = useState({
     email: "",
     password: "",
   });
 
   //handle Success function
-  const handleSuccess = async (googleData) => {
+  const handleGoogleSuccess = async (googleData) => {
     const userInfo = jwtDecode(googleData.credential);
     const { name, email, sub: googleId } = userInfo;
     const createUser = {
@@ -33,12 +36,19 @@ const LoginForm = () => {
       body: JSON.stringify(createUser),
     });
 
-    const data = await res.json();
-    console.log(data);
+    const userData = await res.json();
+    console.log(userData);
+    dispatch(setProfileInfo(userData.payload));
+    profileInLocalStorage(userData.payload.name);
   };
 
+  // //useEffect hook
+  // useEffect(() => {
+  //   profileInLocalStorage(userData.payload);
+  // }, [setProfileInfo]);
+
   //handle error function
-  const handleError = (error) => {
+  const handleGoogleError = (error) => {
     console.log(error);
   };
 
@@ -47,19 +57,6 @@ const LoginForm = () => {
     return setValue((prev) => {
       return { ...prev, ...value };
     });
-  };
-
-  //handle facebook success
-  const handleFbSuccess = (response) => {
-    console.log("Login Success!", response);
-  };
-  //handle facebook fail
-  const handleFbFail = (error) => {
-    console.log("Login Failed!", error);
-  };
-  //handle facebook profile success
-  const handleFbProfileSuccess = (response) => {
-    console.log("Get Profile Success!", response);
   };
 
   //handlesubmit function
@@ -88,9 +85,10 @@ const LoginForm = () => {
       console.log(error);
     }
   };
+
   return (
     <div className="p-20">
-      <Card className="w-3/12 p-3 border-none shadow-md  mx-auto">
+      <Card className="w-5/12 p-3 border-none shadow-md  mx-auto">
         <h2 className="mx-auto mb-4 text-pink-600 font-bold text-3xl">Login</h2>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
@@ -129,16 +127,11 @@ const LoginForm = () => {
             </button>
 
             <GoogleOAuthProvider clientId={clientId}>
-              <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+              />
             </GoogleOAuthProvider>
-
-            <FacebookLogin
-              appId={fbId}
-              className="mt-3 rounded-md w-full bg-blue-600 hover:bg-blue-500 font-semibold text-white py-2 px-6 border-none"
-              onSuccess={handleFbSuccess}
-              onFail={handleFbFail}
-              onProfileSuccess={handleFbProfileSuccess}
-            />
           </Form.Group>
         </Form>
       </Card>

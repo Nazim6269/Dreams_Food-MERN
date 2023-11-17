@@ -1,9 +1,11 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { setSelectProduct } from "../../redux/actions/actionsCreator";
 
 const Cards = () => {
   const { data } = useSelector((state) => state.fetchReducer);
+  const dispatch = useDispatch();
 
   if (!data) {
     return (
@@ -12,6 +14,10 @@ const Cards = () => {
       </div>
     );
   }
+
+  const handleClick = () => {
+    dispatch(setSelectProduct(data));
+  };
 
   return (
     <section className="  text-gray-600 body-font">
@@ -38,6 +44,7 @@ const Cards = () => {
                   <Link to={`/cardDetails/${_id}`}>
                     <img
                       className="h-40 rounded  w-full object-cover object-center mb-6"
+                      onClick={handleClick}
                       src={img}
                       alt={name}
                     />

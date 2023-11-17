@@ -38,7 +38,7 @@ const SignupForm = () => {
 
   return (
     <div className="p-20">
-      <Card className="  w-5/12  border-none shadow-sm p-3 mx-auto ">
+      <Card className="w-5/12  border-none shadow-sm p-3 mx-auto ">
         <h2 className="mx-auto mb-4 font-bold text-pink-600 text-3xl">
           Signup
         </h2>
