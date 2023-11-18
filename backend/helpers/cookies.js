@@ -1,6 +1,6 @@
-const setAccessTokenCookie = (accessToken) => {
+const setAccessTokenCookie = (res, accessToken) => {
   res.cookie("accessToken", accessToken, {
-    maxAge: 5 * 60 * 1000,
+    expires: new Date(Date() + 25892000000),
     httpOnly: true,
     sameSite: "none",
   });

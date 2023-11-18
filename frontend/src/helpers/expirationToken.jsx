@@ -1,15 +1,8 @@
-export const setExpiration = (key, value, minutes) => {
+export const setAccessTokenCookie = (key, value, expirationMinutes) => {
   const now = new Date();
-  const item = {
-    value: value,
-    expires: now.getTime() + minutes * 60 * 1000,
-  };
-  localStorage.setItem(key, JSON.stringify(item));
-};
+  const expirationTime = now.getTime() + expirationMinutes * 60 * 1000;
+  const expirationDate = new Date(expirationTime);
 
-export const getExpiration = (key) => {
-  const item = JSON.parse(localStorage.getItem(key));
-  if (!item) return null;
-
-  return item;
+  // Set the cookie
+  document.cookie = `${key}=${value}; expires=${expirationDate.toUTCString()}; path=/;`;
 };
