@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, Form } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { setAccessTokenCookie } from "../../helpers/expirationToken";
+import { setAccessTokenCookie } from "../../helpers/setAccessToken";
 import { profileInLocalStorage } from "../../helpers/setLocalStorage";
 import { setProfileInfo } from "../../redux/actions/actionsCreator";
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -79,7 +79,7 @@ const LoginForm = () => {
         const data = await res.json();
 
         // Function to set a value in cookie storage with an expiration time
-        setAccessTokenCookie("accessToken", data.payload, 1);
+        setAccessTokenCookie("accessToken", data.payload, 10);
         navigate("/");
       }
       setValue({ email: "", password: "" });
