@@ -23,12 +23,14 @@ export const getLocalCart = () => {
     return JSON.parse(data);
   }
 };
+
 export const setLocalSeclectedProduct = (data) => {
   localStorage.setItem("selectedProduct", JSON.stringify(data));
 };
 
 export const getLocalSeclectedProduct = () => {
   const data = localStorage.getItem("selectedProduct");
+
   if (!data) {
     return [];
   } else {

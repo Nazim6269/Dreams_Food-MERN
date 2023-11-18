@@ -1,14 +1,13 @@
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card, Form } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { setExpiration } from "../../helpers/expirationToken";
+import { setAccessTokenCookie } from "../../helpers/expirationToken";
 import { profileInLocalStorage } from "../../helpers/setLocalStorage";
 import { setProfileInfo } from "../../redux/actions/actionsCreator";
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-const fbId = import.meta.env.VITE_FB_ID;
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -21,11 +20,13 @@ const LoginForm = () => {
   //handle Success function
   const handleGoogleSuccess = async (googleData) => {
     const userInfo = jwtDecode(googleData.credential);
-    const { name, email, sub: googleId } = userInfo;
+    const { name, email, sub: googleId, picture } = userInfo;
+
     const createUser = {
       name,
       email,
       googleId,
+      picture,
     };
 
     const res = await fetch("http://localhost:3333/google-login", {
@@ -37,9 +38,9 @@ const LoginForm = () => {
     });
 
     const userData = await res.json();
-    console.log(userData);
+
     dispatch(setProfileInfo(userData.payload));
-    profileInLocalStorage(userData.payload.name);
+    profileInLocalStorage(userData.payload);
   };
 
   // //useEffect hook
@@ -73,11 +74,12 @@ const LoginForm = () => {
         },
         body: JSON.stringify(person),
       });
+
       if (res.ok) {
         const data = await res.json();
 
-        // Function to set a value in local storage with an expiration time
-        setExpiration("accessToken", data.payload, 5);
+        // Function to set a value in cookie storage with an expiration time
+        setAccessTokenCookie("accessToken", data.payload, 1);
         navigate("/");
       }
       setValue({ email: "", password: "" });

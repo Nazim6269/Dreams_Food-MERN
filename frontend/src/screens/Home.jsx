@@ -5,7 +5,7 @@ import Cards from "../Components/Cards/Cards";
 
 import Footer from "../Components/Footer/Footer";
 import Navbar from "../Components/Navbar/Navbar";
-import { getExpiration } from "../helpers/expirationToken";
+import { setAccessTokenCookie } from "../helpers/expirationToken";
 import { fetchData } from "../helpers/fetchData";
 import {
   failedFetch,

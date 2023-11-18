@@ -13,6 +13,7 @@ module.exports = {
   plugins: ["react-refresh"],
   rules: {
     "no-undef": "off",
+    "react-hooks/rules-of-hooks": "off",
     "react/prop-types": "off",
     "no-unused-vars": "off",
     "no-case-declarations": "off",

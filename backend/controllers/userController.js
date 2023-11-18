@@ -21,7 +21,7 @@ const signupGetController = (req, res) => {
 };
 //google login controller
 const googleLoginController = async (req, res, next) => {
-  const { name, email, googleId } = req.body;
+  const { name, email, googleId, picture } = req.body;
 
   try {
     const user = await User.findOne({ email });
@@ -31,6 +31,7 @@ const googleLoginController = async (req, res, next) => {
       const newUser = await User.create({
         name,
         email,
+        picture,
         password: hasedPassword,
       });
 
@@ -56,11 +57,6 @@ const googleLoginController = async (req, res, next) => {
   } catch (error) {
     next(createError(error));
   }
-};
-
-//facebook login controller
-const facebookLoginController = async (req, res, next) => {
-  console.log(req.body);
 };
 
 //signup POST controller
@@ -121,12 +117,14 @@ const loginPostController = async (req, res, next) => {
         message: "Password did not match",
       });
     }
-
+    console.log(jwtAccessKey);
     //createToken
     const accessToken = createJWT({ email, password }, jwtAccessKey, "10m");
-    setAccessTokenCookie(accessToken);
-    const refreshToken = createJWT({ email, password }, jwtAccessKey, "7d");
-    setRefreshTokenCookie(refreshToken);
+
+    // setAccessTokenCookie(res, accessToken);
+
+    // const refreshToken = createJWT({ email, password }, jwtAccessKey, "7d");
+    // setRefreshTokenCookie(refreshToken);
 
     return successResponse(res, {
       statusCode: 200,
@@ -173,5 +171,4 @@ module.exports = {
   loginPostController,
   foodController,
   googleLoginController,
-  facebookLoginController,
 };

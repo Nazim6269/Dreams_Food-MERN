@@ -16,6 +16,9 @@ const signupSchema = mongoose.Schema({
   googleId: {
     type: String,
   },
+  picture: {
+    type: String,
+  },
   tokens: [{ token: String }],
 });
 

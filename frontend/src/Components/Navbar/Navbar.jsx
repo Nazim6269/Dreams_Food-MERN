@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
-  const { name } = useSelector((state) => state.profileReducer);
-  console.log(name);
+  const { profile } = useSelector((state) => state.profileReducer);
+
   return (
     <div>
       <header className="text-white bg-pink-600 font-semibold body-font shadow-lg">
@@ -24,15 +24,28 @@ const Navbar = () => {
 
           <Link
             to="/cart"
-            className="inline-flex items-center text-white bg-pink-600 border-1 py-1 px-3 focus:outline-none hover:bg-white rounded   md:mt-0"
+            className="inline-flex items-center text-white bg-pink-600 border-1 py-1 px-3 focus:outline-none hover:bg-white rounded  hover:text-pink-600  md:mt-0"
           >
             Go to cart
           </Link>
+          <Link
+            to="/login"
+            className="inline-flex items-center text-white bg-pink-600 border-1 py-1 px-3 focus:outline-none hover:bg-white rounded  hover:text-pink-600 md:mt-0"
+          >
+            Login
+          </Link>
+          <Link className="inline-flex items-center text-white bg-pink-600 border-1 py-1 px-3 focus:outline-none hover:bg-white hover:text-pink-600 rounded   md:mt-0">
+            Log out
+          </Link>
           <div className="flex items-center">
             <div className="mr-2 ml-6">
-              <img className="w-8 h-8 rounded-full " src="./Nazim.jpg" alt="" />
+              <img
+                className="w-8 h-8 rounded-full "
+                src={profile.picture}
+                alt=""
+              />
             </div>
-            <div>{name}</div>
+            <div>{profile.name}</div>
           </div>
         </div>
       </header>

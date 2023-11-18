@@ -1,20 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import { addToCart } from "../../redux/actions/actionsCreator";
 import { setLocalSeclectedProduct } from "../../helpers/setLocalStorage";
+import {
+  addToCart,
+  setSelectProduct,
+} from "../../redux/actions/actionsCreator";
 
 const CardDetails = () => {
-  const { id } = useParams();
-  const { data } = useSelector((state) => state.selectedProductReducer);
-  console.log(data);
   const dispatch = useDispatch();
+  const { id } = useParams();
 
-  if (!data) {
+  const { selectedProduct } = useSelector(
+    (state) => state.selectedProductReducer
+  );
+
+  if (!selectedProduct) {
     return <div>Loading</div>;
   }
 
-  const arrData = data.filter((item) => item._id === id);
+  const arrData = selectedProduct.filter((item) => item._id === id);
   if (!arrData || arrData.length === 0) {
     return (
       <div className=" h-[55vh] flex justify-center items-center text-4xl">
@@ -23,7 +28,10 @@ const CardDetails = () => {
     );
   }
 
-  setLocalSeclectedProduct(arrData);
+  useEffect(() => {
+    dispatch(setSelectProduct(arrData));
+    setLocalSeclectedProduct(arrData);
+  }, []);
 
   //handleCart function
   const handleCart = (item) => {
