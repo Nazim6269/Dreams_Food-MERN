@@ -5,7 +5,7 @@ import Cards from "../Components/Cards/Cards";
 
 import Footer from "../Components/Footer/Footer";
 import Navbar from "../Components/Navbar/Navbar";
-import { setAccessTokenCookie } from "../helpers/expirationToken";
+import { setAccessTokenCookie } from "../helpers/setAccessToken";
 import { fetchData } from "../helpers/fetchData";
 import {
   failedFetch,
@@ -13,6 +13,7 @@ import {
   successFetch,
 } from "../redux/actions/actionsCreator";
 import HeroSection from "../Components/Hero/HeroSection";
+import { getAccessToken } from "../helpers/getAccessToken";
 
 const Home = () => {
   const dispatch = useDispatch();
