@@ -1,5 +1,4 @@
 //external import
-const jwt = require("jsonwebtoken");
 const createError = require("http-errors");
 const bcrypt = require("bcryptjs");
 //internal import
@@ -8,13 +7,10 @@ const {
   successResponse,
 } = require("../helpers/responseHandler");
 const { User } = require("../models/signupModel");
-const { jwtAccessKey } = require("../secret");
+const { jwtAccessKey, jwtSecretKey } = require("../secret");
 const { mongoose } = require("mongoose");
 const { createJWT } = require("../helpers/createJWT");
-const {
-  setAccessTokenCookie,
-  setRefreshTokenCookie,
-} = require("../helpers/cookies");
+const emailWithNodemailer = require("../helpers/emailWithNodemailer");
 
 const signupGetController = (req, res) => {
   res.send("hi");
@@ -22,6 +18,7 @@ const signupGetController = (req, res) => {
 //google login controller
 const googleLoginController = async (req, res, next) => {
   const { name, email, googleId, picture } = req.body;
+  const accessToken = createJWT({ email, googleId }, jwtAccessKey, "10m");
 
   try {
     const user = await User.findOne({ email });
@@ -45,25 +42,37 @@ const googleLoginController = async (req, res, next) => {
       successResponse(res, {
         statusCode: 201,
         message: "User Created Successfully",
-        payload: newUser,
+        payload: accessToken,
       });
     } else {
       successResponse(res, {
         statusCode: 200,
         message: "User Exist with this email",
-        payload: email,
+        payload: accessToken,
       });
     }
   } catch (error) {
     next(createError(error));
   }
 };
+//logout controller
+const logoutController = async (req, res, next) => {
+  const { email } = req.body;
+  const response = await User.findOneAndDelete(email);
+  if (!response) {
+    errorResponse(res, { statusCode: 400, message: "Failed To logout" });
+  }
+  successResponse(res, {
+    statusCode: 200,
+    message: "Successfully log out",
+  });
+};
 
 //signup POST controller
 const signupPostController = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
+    console.log("3");
     const isExist = await User.findOne({ email });
 
     if (isExist)
@@ -87,10 +96,13 @@ const signupPostController = async (req, res) => {
         message: "Failed to sign up",
       });
     }
+
+    const accessToken = createJWT({ email, password }, jwtAccessKey, "10m");
+
     successResponse(res, {
       statusCode: 201,
       message: "User Created Successfully",
-      payload: newUser,
+      payload: accessToken,
     });
   } catch (error) {
     console.log(error);
@@ -165,10 +177,35 @@ const foodController = async (req, res, next) => {
   }
 };
 
+//forget password controller
+const forgetPassController = async (req, res, next) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    errorResponse(res, {
+      statusCode: 404,
+      message: "User does not exist",
+      success: false,
+    });
+  } else {
+    const token = createJWT({ id: user._id, email }, jwtSecretKey, "1d");
+
+    //emaildata
+    const emailData = {
+      email,
+      subject: "Reset your password",
+      html: `<a href="http://localhost:5173/reset-password/${user._id}/${token}" > Activate your account</a>`,
+    };
+    emailWithNodemailer(emailData);
+  }
+};
+
 module.exports = {
   signupPostController,
   signupGetController,
   loginPostController,
   foodController,
   googleLoginController,
+  logoutController,
+  forgetPassController,
 };
