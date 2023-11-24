@@ -6,6 +6,7 @@ const {
   googleLoginController,
   logoutController,
   forgetPassController,
+  resetPassController,
 } = require("../controllers/userController");
 const { signupValidator, loginValidator } = require("../validators/condition");
 const { runValidation } = require("../validators/validation");
@@ -24,5 +25,6 @@ userRouter.post("/logout", logoutController);
 userRouter.get("/food", foodController);
 userRouter.post("/google-login", googleLoginController);
 userRouter.post("/forget-password", forgetPassController);
+userRouter.post("/reset-password", resetPassController);
 
 module.exports = { userRouter };

@@ -1,1 +1,6 @@
-
+.desktop-nav .dropdown {
+  display: none;
+}
+.desktop-nav .dropdown.show {
+  display: block;
+}

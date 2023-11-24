@@ -27,10 +27,7 @@ function App() {
           <Route path="/login" exact element={<LoginForm />} />
           <Route path="/signup" exact element={<SignupForm />} />
           <Route path="/forget-password" element={<ForgetPassword />} />
-          <Route
-            path="/reset-password/:id/:token"
-            element={<ResetPassword />}
-          />
+          <Route path="/reset-password" element={<ResetPassword />} />
           {/* <Route path="*" exact element={<NotFound />} /> */}
         </Routes>
       </BrowserRouter>
