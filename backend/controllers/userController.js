@@ -194,9 +194,27 @@ const forgetPassController = async (req, res, next) => {
     const emailData = {
       email,
       subject: "Reset your password",
-      html: `<a href="http://localhost:5173/reset-password/${user._id}/${token}" > Activate your account</a>`,
+      html: `<a href="http://localhost:5173/reset-password?token=${token}&id=${user._id}" > Activate your account</a>`,
     };
     emailWithNodemailer(emailData);
+  }
+};
+
+//handele reset password
+const resetPassController = async (req, res, next) => {
+  const { newPass, confirmPass } = req.body;
+  if (newPass !== confirmPass) {
+    errorResponse(res, {
+      statusCode: 400,
+      success: false,
+      message: "Your password didnot match",
+    });
+  } else {
+    successResponse(res, {
+      statusCode: 201,
+      success: true,
+      message: "Successfully updated password",
+    });
   }
 };
 
@@ -208,4 +226,5 @@ module.exports = {
   googleLoginController,
   logoutController,
   forgetPassController,
+  resetPassController,
 };
