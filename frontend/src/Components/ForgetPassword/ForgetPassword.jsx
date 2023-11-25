@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
+import { ToastContainer, toast } from "react-toastify";
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState("");
@@ -22,6 +23,8 @@ const ForgetPassword = () => {
         body: JSON.stringify({ email }),
       });
       setEmail("");
+      const data = await response.json();
+      toast(data.message);
     } catch (error) {
       console.log(error);
     }
@@ -42,6 +45,7 @@ const ForgetPassword = () => {
               placeholder="name@example.com"
             />
           </Form.Group>
+          <ToastContainer position="top-center" autoClose={4000} />
           <Form.Group className="mb-3">
             <button
               onClick={handleSubmit}

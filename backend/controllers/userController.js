@@ -196,25 +196,71 @@ const forgetPassController = async (req, res, next) => {
       subject: "Reset your password",
       html: `<a href="http://localhost:5173/reset-password?token=${token}&id=${user._id}" > Activate your account</a>`,
     };
-    emailWithNodemailer(emailData);
+    try {
+      const info = await emailWithNodemailer(emailData);
+      if (info.accepted.length > 0) {
+        successResponse(res, {
+          statusCode: 200,
+          success: true,
+          message: "Message sent your gmail",
+        });
+      } else {
+        errorResponse(res, {
+          statusCode: 400,
+          success: false,
+          message: "Failed to sent message",
+        });
+      }
+    } catch (error) {
+      next(createError(error));
+    }
   }
 };
 
 //handele reset password
 const resetPassController = async (req, res, next) => {
-  const { newPass, confirmPass } = req.body;
-  if (newPass !== confirmPass) {
-    errorResponse(res, {
-      statusCode: 400,
-      success: false,
-      message: "Your password didnot match",
-    });
-  } else {
-    successResponse(res, {
-      statusCode: 201,
-      success: true,
-      message: "Successfully updated password",
-    });
+  try {
+    const { newPass, confirmPass, id } = req.body;
+    console.log(newPass, "==>", confirmPass);
+
+    if (newPass !== confirmPass) {
+      errorResponse(res, {
+        statusCode: 400,
+        success: false,
+        message: "Your password didnot match",
+      });
+    } else {
+      const isExist = await User.findById(id);
+      if (!isExist) {
+        errorResponse(res, {
+          statusCode: 404,
+          success: false,
+          message: "User Not Found",
+        });
+      }
+      const hasedPassword = await bcrypt.hash(confirmPass, 10);
+      const response = await User.findByIdAndUpdate(
+        id,
+        {
+          password: hasedPassword,
+        },
+        { new: true }
+      );
+      if (!response) {
+        errorResponse(res, {
+          statusCode: 400,
+          success: false,
+          message: "Failed to update password",
+        });
+      }
+      successResponse(res, {
+        statusCode: 201,
+        success: true,
+        message: "Successfully updated password",
+      });
+    }
+  } catch (error) {
+    next(createError(error));
   }
 };
 
