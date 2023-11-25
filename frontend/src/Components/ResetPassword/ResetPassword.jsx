@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 const ResetPassword = () => {
   const [newPass, setNewPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
-
-  console.log(useParams());
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const id = queryParams.get("id");
 
   //handle send function
   const handleSend = async (e) => {
@@ -19,10 +21,12 @@ const ResetPassword = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ newPass, confirmPass }),
+        body: JSON.stringify({ newPass, confirmPass, id }),
       });
+      setConfirmPass("");
+      setNewPass("");
       const data = await res.json();
-      console.log(data);
+      toast(data.message);
     } catch (error) {
       console.log(error);
     }
@@ -33,7 +37,7 @@ const ResetPassword = () => {
         <h2 className="mx-auto mb-4 text-pink-600 font-bold text-3xl">
           Enter Your Password
         </h2>
-        <Form>
+        <Form onSubmit={handleSend}>
           <Form.Group className="mb-3">
             <Form.Label>New Password</Form.Label>
             <Form.Control
@@ -42,6 +46,7 @@ const ResetPassword = () => {
               onChange={(e) => setNewPass(e.target.value)}
             />
           </Form.Group>
+          <ToastContainer position="top-center" autoClose={4000} />
           <Form.Group className="mb-3">
             <Form.Label>Confirm Password</Form.Label>
             <Form.Control
@@ -54,7 +59,6 @@ const ResetPassword = () => {
             <button
               className="btn border-none text-white font-semibold bg-pink-600 hover:bg-pink-500 w-full text-center"
               type="submit"
-              onClick={handleSend}
             >
               Send
             </button>

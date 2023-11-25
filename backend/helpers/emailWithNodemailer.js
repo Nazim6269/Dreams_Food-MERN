@@ -22,7 +22,7 @@ const emailWithNodemailer = async (emailData) => {
       html: emailData.html,
     };
     const info = await transporter.sendMail(mailOptions);
-    console.log("Message sent" + info.response);
+    return info;
   } catch (error) {
     throw error;
   }
