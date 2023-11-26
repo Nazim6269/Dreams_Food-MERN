@@ -61,11 +61,12 @@ const logoutController = async (req, res, next) => {
   const response = await User.findOneAndDelete(email);
   if (!response) {
     errorResponse(res, { statusCode: 400, message: "Failed To logout" });
+  } else {
+    successResponse(res, {
+      statusCode: 200,
+      message: "Successfully log out",
+    });
   }
-  successResponse(res, {
-    statusCode: 200,
-    message: "Successfully log out",
-  });
 };
 
 //signup POST controller

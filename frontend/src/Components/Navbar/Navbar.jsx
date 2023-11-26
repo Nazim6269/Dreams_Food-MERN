@@ -1,38 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { deleteAccessToken } from "../../helpers/deleteAccessToken";
+import { Link } from "react-router-dom";
+import Modal from "../Modal/Modal";
 
 const Navbar = () => {
-  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
   const { profile } = useSelector((state) => state.profileReducer);
 
-  //handle log out function
-  const handleLogout = async () => {
-    try {
-      const response = await fetch("http://localhost:3333/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(profile),
-      });
-
-      deleteAccessToken("accessToken");
-      navigate("/login");
-    } catch (error) {
-      console.log(error);
-    }
+  //handleModal function
+  const handleModal = () => {
+    setShowModal((prev) => !prev);
   };
+
+  const closeModal = () => setShowModal(false);
+
   return (
     <div>
       <header className="text-white bg-pink-600 font-semibold body-font shadow-lg">
         <div className="container mx-auto flex flex-wrap p-4 flex-col md:flex-row items-center">
           <div>
-            <a className="flex title-font font-medium items-center md:mb-0">
+            <a className="flex title-font font-medium items-center md:mb-0 ">
               <div className="ml-3 text-3xl italic">Dreams Food</div>
             </a>
           </div>
+          <h3 className="ml-4">Category</h3>
           <nav className="md:ml-auto md:mr-auto flex flex-wrap  items-center text-base justify-center">
             <Link className="mr-5">Home</Link>
             <Link className="mr-5">About</Link>
@@ -54,11 +45,9 @@ const Navbar = () => {
             >
               Login
             </Link>
-            <Link
-              onClick={handleLogout}
-              className="inline-flex items-center text-white bg-pink-600 border-1 py-1 px-3 focus:outline-none hover:bg-pink-500  md:mt-0"
-            >
-              Log out
+
+            <Link className="inline-flex ml-2 items-center text-white bg-pink-600  py-1 px-3 focus:outline-none hover:bg-pink-300 hover:rounded  md:mt-0">
+              Language
             </Link>
           </div>
           <div className="flex items-center">
@@ -69,7 +58,10 @@ const Navbar = () => {
                 alt=""
               />
             </div>
-            <div>{profile.name}</div>
+            <div className="cursor-pointer" onClick={handleModal}>
+              {profile.name}
+            </div>
+            {showModal && <Modal closeModal={closeModal} profile={profile} />}
           </div>
         </div>
       </header>
