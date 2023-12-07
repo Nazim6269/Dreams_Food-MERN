@@ -5,6 +5,7 @@ import {
 } from "../../helpers/setLocalStorage";
 import {
   ADD_TO_CART,
+  DECREMENT_ITEM,
   FETCH_FAILED,
   FETCH_START,
   FETCH_SUCCESS,
@@ -61,6 +62,20 @@ export const cartReducer = (state = initialState, { type, payload }) => {
       return {
         ...state,
         cart: state.cart.filter((item) => item._id !== payload),
+      };
+
+    case DECREMENT_ITEM:
+      return {
+        ...state,
+        cart: state.cart.map((item) => {
+          if (item && item._id === payload) {
+            return {
+              ...item,
+              quantity: item.quantity > 1 ? item.quantity - 1 : 1,
+            };
+          }
+          return item;
+        }),
       };
 
     default:
