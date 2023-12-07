@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { deleteAccessToken } from "./deleteAccessToken";
-import { useEffect } from "react";
 
 export const logout = async (profile) => {
   const navigate = useNavigate();

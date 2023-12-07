@@ -1,5 +1,6 @@
 import {
   ADD_TO_CART,
+  DECREMENT_ITEM,
   FETCH_FAILED,
   FETCH_START,
   FETCH_SUCCESS,
@@ -53,5 +54,12 @@ export const setSelectProduct = (payload) => {
   return {
     type: SELECTED_PRODUCT,
     payload: payload,
+  };
+};
+
+export const decrementItem = (id) => {
+  return {
+    type: DECREMENT_ITEM,
+    payload: id,
   };
 };
