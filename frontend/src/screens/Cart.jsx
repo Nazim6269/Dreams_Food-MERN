@@ -1,25 +1,34 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { setLocalCart } from "../helpers/setLocalStorage";
 import {
   addToCart,
   decrementItem,
   removeFromCart,
 } from "../redux/actions/actionsCreator";
-import { setLocalCart } from "../helpers/setLocalStorage";
 
 const Cart = () => {
   const { cart } = useSelector((state) => state.cartReducer);
-
+  const [amount, setAmount] = useState("");
+  const [total, setTotal] = useState("");
   const dispatch = useDispatch();
 
-  //handleDecrement function
-  const handleDecrement = (id) => {
-    dispatch(decrementItem(id));
+  // Function to calculate the total amount
+  const calculateTotal = () => {
+    let totalPrice = 0;
+    cart.forEach((item) => {
+      if (item && typeof item === "object") {
+        totalPrice += item.options[0].full * item.quantity;
+      }
+    });
+    return totalPrice + 10;
   };
 
   useEffect(() => {
     setLocalCart(cart);
+    setAmount(cart.length);
+    setTotal(calculateTotal());
   }, [cart]);
 
   return (
@@ -30,10 +39,9 @@ const Cart = () => {
           {/* heading  */}
           <div className="flex justify-between border-b pb-8">
             <h1 className="font-semibold text-2xl">Shopping Cart</h1>
-            <h2 className="font-semibold text-2xl"> Items</h2>
           </div>
           {/* sub heading */}
-          <div className="flex mt-10 mb-5">
+          <div className="flex mt-3">
             <h3 className="font-semibold text-gray-600 text-xs uppercase w-2/5">
               Product Details
             </h3>
@@ -60,14 +68,14 @@ const Cart = () => {
             return (
               <div
                 key={_id}
-                className="flex items-center hover:bg-gray-100 -mx-8 px-6 py-5"
+                className="flex items-center hover:bg-gray-100  py-4"
               >
                 <div className="flex w-2/5">
                   <div className="w-20">
-                    <img className="h-24" src={img} alt={CategoryName} />
+                    <img className="h-18" src={img} alt={CategoryName} />
                   </div>
                   <div className="flex flex-col justify-between ml-4 flex-grow">
-                    <span className="text-red-500 text-xs capitalize">
+                    <span className="text-red-500 font-bold text-md capitalize">
                       {CategoryName}
                     </span>
                     <div
@@ -82,7 +90,7 @@ const Cart = () => {
                   <svg
                     className="fill-current text-gray-600 w-3 cursor-pointer"
                     viewBox="0 0 448 512"
-                    onClick={() => handleDecrement(_id)}
+                    onClick={() => dispatch(decrementItem(_id))}
                   >
                     <path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
                   </svg>
@@ -129,12 +137,12 @@ const Cart = () => {
           <h1 className="font-semibold text-2xl border-b pb-8">
             Order Summary
           </h1>
-          <div className="flex justify-between mt-10 mb-5">
-            <span className="font-semibold text-sm uppercase">Items</span>
-            <span className="font-semibold text-sm">$</span>
+          <div className="flex font-bold text-md uppercase justify-between my-3 ">
+            <span>Items</span>
+            <span>{amount}</span>
           </div>
           <div>
-            <label className="font-medium inline-block mb-3 text-sm uppercase">
+            <label className="font-medium inline-block text-sm uppercase">
               Shipping
             </label>
             <select className="block p-2 text-gray-600 w-full text-sm">
@@ -144,7 +152,7 @@ const Cart = () => {
           <div className="py-10">
             <label
               htmlFor="promo"
-              className="font-semibold inline-block mb-3 text-sm uppercase"
+              className="font-semibold inline-block text-sm uppercase"
             >
               Promo Code
             </label>
@@ -159,9 +167,9 @@ const Cart = () => {
             Apply
           </button>
           <div className="border-t mt-8">
-            <div className="flex font-semibold justify-between py-6 text-sm uppercase">
+            <div className="flex font-bold justify-between py-6 text-md uppercase">
               <span>Total cost</span>
-              <span>$</span>
+              <span>{total}$</span>
             </div>
             <button className="bg-pink-500 font-semibold hover:bg-pink-600 py-3 text-sm text-white uppercase w-full">
               Checkout
