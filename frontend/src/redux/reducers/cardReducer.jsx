@@ -25,6 +25,7 @@ const initialState = {
 };
 
 //reducer functions
+//fetch reducer function
 export const fetchReducer = (state = initialState, { type, payload }) => {
   switch (type) {
     case FETCH_START:
@@ -40,12 +41,15 @@ export const fetchReducer = (state = initialState, { type, payload }) => {
   }
 };
 
+//cart reducer function
 export const cartReducer = (state = initialState, { type, payload }) => {
   switch (type) {
+    //add to cart item and increase item
     case ADD_TO_CART:
       const selectedProduct = state.cart.find(
         (item) => item._id === payload._id
       );
+
       if (selectedProduct) {
         const newCart = state.cart.filter(
           (item) => item._id !== selectedProduct._id
@@ -58,12 +62,14 @@ export const cartReducer = (state = initialState, { type, payload }) => {
       }
       return { ...state, cart: [...state.cart, { ...payload, quantity: 1 }] };
 
+    //remove from cart
     case REMOVE_FROM_CART:
       return {
         ...state,
         cart: state.cart.filter((item) => item._id !== payload),
       };
 
+    //decrement cart item
     case DECREMENT_ITEM:
       return {
         ...state,
@@ -83,6 +89,7 @@ export const cartReducer = (state = initialState, { type, payload }) => {
   }
 };
 
+//profile reducer function
 export const profileReducer = (state = initialState, { type, payload }) => {
   switch (type) {
     case SET_PROFILE_INFO:
@@ -96,6 +103,7 @@ export const profileReducer = (state = initialState, { type, payload }) => {
   }
 };
 
+//selected product reducer function
 export const selectedProductReducer = (
   state = initialState,
   { type, payload }
