@@ -10,6 +10,7 @@ import ResetPassword from "./Components/ResetPassword/ResetPassword";
 import SignupForm from "./Components/signup/SignupForm";
 import store from "./redux/store";
 import Cart from "./screens/Cart";
+import Contact from "./screens/Contact";
 import Home from "./screens/Home";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
             <Route path="/" exact element={<Home />} />
             <Route path="/cardDetails/:id" exact element={<CardDetails />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/contact" element={<Contact />} />
           </Route>
           {/* public routes are here */}
           <Route path="/login" exact element={<LoginForm />} />

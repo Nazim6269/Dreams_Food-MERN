@@ -25,9 +25,14 @@ const Navbar = () => {
           </div>
           <h3 className="ml-4">Category</h3>
           <nav className="md:ml-auto md:mr-auto flex flex-wrap  items-center text-base justify-center">
-            <Link className="mr-5">Home</Link>
+            <Link className="mr-5" to="/">
+              Home
+            </Link>
             <Link className="mr-5">About</Link>
-            <Link className="mr-5"> Contact</Link>
+            <Link className="mr-5" to="/contact">
+              {" "}
+              Contact
+            </Link>
             <Link className="mr-5">Profile</Link>
           </nav>
           {/* Navbar Button  */}
