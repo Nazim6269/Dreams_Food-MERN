@@ -28,7 +28,6 @@ const Home = () => {
   return (
     <div>
       <Navbar />
-
       <HeroSection />
       <Cards />
       <Footer />
