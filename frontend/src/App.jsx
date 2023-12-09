@@ -12,6 +12,7 @@ import store from "./redux/store";
 import Cart from "./screens/Cart";
 import Contact from "./screens/Contact";
 import Home from "./screens/Home";
+import SingleCategory from "./Components/SingleCategory/SingleCategory";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/cardDetails/:id" exact element={<CardDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/category/:id" element={<SingleCategory />} />
           </Route>
           {/* public routes are here */}
           <Route path="/login" exact element={<LoginForm />} />

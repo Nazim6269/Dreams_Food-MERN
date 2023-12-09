@@ -10,6 +10,7 @@ import {
   startFetch,
   successFetch,
 } from "../redux/actions/actionsCreator";
+import Categories from "../Components/Categories/Categories";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const Home = () => {
     <div>
       <Navbar />
       <HeroSection />
+      <Categories />
       <Cards />
       <Footer />
     </div>
