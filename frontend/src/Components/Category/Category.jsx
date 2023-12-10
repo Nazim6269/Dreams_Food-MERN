@@ -1,8 +1,9 @@
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+
 const Category = () => {
   const { data } = useSelector((state) => state.fetchReducer);
-  console.log(data);
+
   if (!data) {
     return (
       <div className=" h-[55vh] flex justify-center items-center text-4xl">

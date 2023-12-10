@@ -4,6 +4,7 @@ import {
   FETCH_FAILED,
   FETCH_START,
   FETCH_SUCCESS,
+  RANGE_FILTER,
   REMOVE_FROM_CART,
   SELECTED_PRODUCT,
   SET_PROFILE_INFO,
@@ -61,5 +62,12 @@ export const decrementItem = (id) => {
   return {
     type: DECREMENT_ITEM,
     payload: id,
+  };
+};
+
+export const setRangeValue = (payload) => {
+  return {
+    type: RANGE_FILTER,
+    payload: payload,
   };
 };

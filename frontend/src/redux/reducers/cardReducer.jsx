@@ -9,6 +9,7 @@ import {
   FETCH_FAILED,
   FETCH_START,
   FETCH_SUCCESS,
+  RANGE_FILTER,
   REMOVE_FROM_CART,
   SELECTED_PRODUCT,
   SET_PROFILE_INFO,
@@ -22,6 +23,7 @@ const initialState = {
   cart: getLocalCart(),
   profile: getLocalProfile(),
   selectedProduct: getLocalSeclectedProduct(),
+  filteredRange: { minValue: 0, maxValue: 100 },
 };
 
 //reducer functions
@@ -113,6 +115,20 @@ export const selectedProductReducer = (
       return {
         ...state,
         selectedProduct: payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
+//export fitler reducer
+export const filterReducer = (state = initialState, { type, payload }) => {
+  switch (type) {
+    case RANGE_FILTER:
+      return {
+        ...state,
+        filteredRange: { minValue: payload[0], maxValue: payload[1] },
       };
 
     default:
