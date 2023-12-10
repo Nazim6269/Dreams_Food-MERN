@@ -2,6 +2,7 @@ import { combineReducers } from "redux";
 import {
   cartReducer,
   fetchReducer,
+  filterReducer,
   profileReducer,
   selectedProductReducer,
 } from "./cardReducer";
@@ -11,4 +12,5 @@ export const rootReducer = combineReducers({
   cartReducer,
   profileReducer,
   selectedProductReducer,
+  filterReducer,
 });

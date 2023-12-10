@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Footer from "../Footer/Footer";
@@ -7,6 +7,9 @@ import SelectFilter from "../SelectFilter/SelectFilter";
 
 const SingleCategory = () => {
   const { data } = useSelector((state) => state.fetchReducer);
+  const { filteredRange } = useSelector((state) => state.filterReducer);
+  const { id } = useParams();
+
   if (!data) {
     return (
       <div className=" h-[55vh] flex justify-center items-center text-4xl">
@@ -14,12 +17,32 @@ const SingleCategory = () => {
       </div>
     );
   }
-  const { id } = useParams();
-  const filteredData = data.filter((item) => item.CategoryName === id);
-  if (!filteredData) {
+
+  const [filteredData, setFilteredData] = useState([]);
+
+  useEffect(() => {
+    const initialFilteredData = data.filter((item) => item.CategoryName === id);
+    setFilteredData(initialFilteredData);
+  }, [data]);
+
+  // useEffect(() => {
+  //   const filteredPriceData = filteredData.filter((item) => {
+  //     const itemPrice = parseFloat(item.options[0].half);
+  //     return (
+  //       itemPrice >= filteredRange.minValue &&
+  //       itemPrice <= filteredRange.maxValue
+  //     );
+  //   });
+  //   setFilteredData(filteredPriceData);
+  //   console.log(filteredData, "2");
+  // }, [filteredRange]);
+
+  // console.log(filteredData, "3");
+
+  if (!filteredData.length) {
     return (
       <div className=" h-[55vh] flex justify-center items-center text-4xl">
-        Loading...
+        No items match the selected price range.
       </div>
     );
   }
@@ -91,7 +114,7 @@ const SingleCategory = () => {
                         <h2 className="text-gray-900 title-font text-lg font-medium">
                           The Catalyzer
                         </h2>
-                        <p className="mt-1">$16.00</p>
+                        <p className="mt-1">Tk-{item.options[0].half}</p>
                       </div>
                     </div>
                   );

@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import "./rangeFilter.css";
 import Slider from "react-slider";
-const MIN = 100;
-const MAX = 1000000;
+import { useDispatch } from "react-redux";
+import { setRangeValue } from "../../redux/actions/actionsCreator";
+const MIN = 10;
+const MAX = 1000;
 
 const RangeFilter = () => {
   const [values, setValues] = useState([MIN, MAX]);
+  const dispatch = useDispatch();
+
   const handleChange = (values) => {
     setValues(values);
+    dispatch(setRangeValue(values));
   };
   return (
     <div>
